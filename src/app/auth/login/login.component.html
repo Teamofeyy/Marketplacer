@@ -1,1 +1,21 @@
-<p>login works!</p>
+<div class="form-container">
+  <form
+    tuiAppearance="floating"
+    tuiCardLarge
+    tuiForm="m"
+    [formGroup]="loginForm"
+    [style.max-width.rem]="32"
+    (ngSubmit)="onLogin()"
+  >
+    <header tuiHeader>
+      <h2 tuiTitle>Авторизация</h2>
+    </header>
+
+    <app-auth-inputs [formGroup]="loginForm"></app-auth-inputs>
+
+    <footer>
+      <button tuiButton type="submit">Войти</button>
+    </footer>
+  </form>
+</div>
+

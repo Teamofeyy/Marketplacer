@@ -34,7 +34,7 @@ export class AuthService {
   }
 
   register(payload: { login: string, password: string, role_id: number }) {
-    return this.http.post<TokenResponse>(`${this.baseApiUrl}/auth/register`, payload, {
+    return this.http.post<TokenResponse>(`${this.baseApiUrl}/register`, payload, {
       headers: this.getHeaders()
     }).pipe(
       catchError(error => {
@@ -46,7 +46,7 @@ export class AuthService {
   }
 
   login(payload: { login: string, password: string }) {
-    return this.http.post<TokenResponse>(`${this.baseApiUrl}/auth/login`, payload, {
+    return this.http.post<TokenResponse>(`${this.baseApiUrl}/login`, payload, {
       headers: this.getHeaders()
     }).pipe(
       tap(res => {

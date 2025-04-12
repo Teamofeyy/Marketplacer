@@ -1,1 +1,17 @@
-<p>register works!</p>
+<form
+  tuiAppearance="floating"
+  tuiCardLarge
+  tuiForm="m"
+  [formGroup]="registerForm"
+  [style.max-width.rem]="32"
+>
+  <header tuiHeader>
+    <h2 tuiTitle>Регистрация</h2>
+  </header>
+
+  <app-auth-inputs [formGroup]="registerForm"></app-auth-inputs>
+
+  <footer>
+    <button (click)="onRegister()" tuiButton type="submit">Зарегистрироваться</button>
+  </footer>
+</form>
