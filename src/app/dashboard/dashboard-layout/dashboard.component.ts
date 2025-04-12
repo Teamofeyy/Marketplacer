@@ -3,10 +3,10 @@ import { RouterOutlet, Router, RouterLink, RouterLinkActive } from '@angular/rou
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { MonitoredProductsService } from '../../services/monitored-products.service';
-import { MonitoredProduct } from '../../interfaces/product.interface';
+import { MonitoredProduct, MonitoredProductCreate } from '../../interfaces/product.interface';
 import { ProductCardComponent } from '../../shared/components/product-card/product-card.component';
-import {TuiButton, TuiIcon, TuiTextfield} from '@taiga-ui/core';
-import {AuthService} from '../../services/auth.service';
+import { TuiButton, TuiIcon, TuiTextfield } from '@taiga-ui/core';
+import { AuthService } from '../../services/auth.service';
 
 @Component({
   selector: 'app-dashboard-layout',
@@ -28,8 +28,7 @@ import {AuthService} from '../../services/auth.service';
 export class DashboardComponent implements OnInit {
   products: MonitoredProduct[] = [];
   isHistoryRoute = false;
-  newProductUrl = '';
-  newProductName = '';
+  newProductInput = '';
 
   constructor(
     private monitoredProductsService: MonitoredProductsService,
@@ -47,23 +46,34 @@ export class DashboardComponent implements OnInit {
     this.router.navigate(['/dashboard/product', productId, 'history']);
   }
 
-  addProduct() {
-    if (!this.newProductName) return;
+  private isUrl(input: string): boolean {
+    try {
+      const url = new URL(input);
+      return url.protocol === 'http:' || url.protocol === 'https:';
+    } catch {
+      return false;
+    }
+  }
 
-    const productData = {
-      name: this.newProductName,
-      ...(this.newProductUrl && { url: this.newProductUrl })
-    };
+  addProduct() {
+    if (!this.newProductInput) return;
+
+    const isUrl = this.isUrl(this.newProductInput);
+    console.log('Input:', this.newProductInput, 'Is URL:', isUrl);
+    
+    const productData: MonitoredProductCreate = isUrl 
+      ? { name: '', url: this.newProductInput }
+      : { name: this.newProductInput };
+
+    console.log('Product Data:', productData);
 
     this.monitoredProductsService.createProduct(productData).subscribe({
       next: (newProduct) => {
         this.products = [...this.products, newProduct];
-        this.newProductUrl = '';
-        this.newProductName = '';
+        this.newProductInput = '';
       },
       error: (error) => {
         console.error('Error creating product:', error);
-        // Here you might want to add error handling UI feedback
       }
     });
   }
