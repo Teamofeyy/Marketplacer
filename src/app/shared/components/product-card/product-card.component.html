@@ -4,9 +4,13 @@
   </div>
   <div class="product-info">
     <div class="product-details">
-      <p>URL: <a [href]="product.url" target="_blank" (click)="$event.stopPropagation()">{{ product.url }}</a></p>
-      <p>Created: {{ product.created_at | date:'medium' }}</p>
-      <p>Updated: {{ product.updated_at | date:'medium' }}</p>
+      <p *ngIf="product.url != null">
+<!--        Ссылка:-->
+<!--&lt;!&ndash;        <a [href]="product.url" target="_blank" (click)="$event.stopPropagation()">&ndash;&gt;-->
+<!--&lt;!&ndash;          {{ product.url }}&ndash;&gt;-->
+<!--&lt;!&ndash;        </a>&ndash;&gt;-->
+      </p>
+      <p>Создано: {{ product.created_at | date:'medium' }}</p>
     </div>
   </div>
 </div>

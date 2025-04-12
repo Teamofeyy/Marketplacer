@@ -1,0 +1,87 @@
+.dashboard-container {
+  display: flex;
+  height: 100vh;
+  width: 100%;
+  background-color: var(--tui-background-base-alt);
+}
+
+.sidebar {
+  width: 280px;
+  background: var(--tui-background-neutral-1);
+  border-right: 1px solid var(--tui-background-neutral-1-hover);
+  border-radius: 10px;
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+
+  .sidebar-header {
+    padding: 1rem;
+    margin-bottom: 1rem;
+    border-bottom: 1px solid var(--tui-base-03);
+    text-align: center;
+  }
+
+  .sidebar-sections {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .sidebar-section {
+    justify-content: flex-start;
+    padding: 1rem;
+
+    &:hover {
+      background: var(--tui-base-03);
+    }
+
+    &.active {
+      background: var(--tui-primary);
+      color: var(--tui-primary-text);
+    }
+  }
+}
+
+.section-content {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  width: 100%;
+}
+
+.dashboard-content {
+  flex-grow: 1;
+  padding: 2rem;
+  overflow-y: auto;
+}
+
+.search-bar {
+  display: flex;
+  align-items: center;
+  margin-bottom: 2rem;
+
+  tui-textfield {
+    flex-grow: 1;
+  }
+}
+
+.products-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 1.5rem;
+  margin-top: 1rem;
+}
+
+.sidebar {
+  &-sections {
+    flex-grow: 1;
+    position: relative;
+  }
+}
+
+.logout-container {
+  margin-top: auto;
+  border-top: 1px solid var(--tui-base-03);
+  padding-top: 0.5rem;
+}

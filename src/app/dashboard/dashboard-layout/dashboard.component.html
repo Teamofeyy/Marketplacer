@@ -1,0 +1,69 @@
+<div class="dashboard-container">
+  <div class="sidebar">
+    <div class="sidebar-header">
+      <h1>Marketplacer</h1>
+    </div>
+    <div class="sidebar-sections">
+      <button tuiButton appearance="flat" size="m" class="sidebar-section">
+        <div class="section-content">
+          <span>Раздел 1</span>
+        </div>
+      </button>
+
+      <button tuiButton appearance="flat" size="m" class="sidebar-section" >
+        <div class="section-content">
+          <span>Раздел 2</span>
+        </div>
+      </button>
+
+      <button tuiButton appearance="flat" class="sidebar-section">
+        <div class="section-content">
+          <span>Раздел 3</span>
+        </div>
+      </button>
+      <div class="logout-container">
+        <button tuiButton
+                appearance="flat"
+                size="m"
+                class="sidebar-section"
+                (click)="authService.logout()">
+          <div class="section-content">
+            <tui-icon icon="@tui.log-out" class="tui-space_right-1"></tui-icon>
+            <span>Выход</span>
+          </div>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div class="dashboard-content">
+    <div class="search-bar">
+      <tui-textfield class="tui-space_bottom-3">
+        <input
+          tuiTextfield
+          [(ngModel)]="newProductName"
+          [placeholder]="'Название товара или URL'"
+          class="name-input"
+        />
+      </tui-textfield>
+
+      <button
+        tuiButton
+        size="l"
+        (click)="addProduct()"
+        [disabled]="!newProductName"
+        class="tui-space_left-3"
+      >
+        Добавить товар
+      </button>
+    </div>
+    <div class="products-grid">
+      <app-product-card
+        *ngFor="let product of products"
+        [product]="product"
+        (click)="onProductClick(product.id)"
+      ></app-product-card>
+    </div>
+    <router-outlet></router-outlet>
+  </div>
+</div>
