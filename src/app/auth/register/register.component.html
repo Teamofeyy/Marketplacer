@@ -1,17 +1,23 @@
-<form
-  tuiAppearance="floating"
-  tuiCardLarge
-  tuiForm="m"
-  [formGroup]="registerForm"
-  [style.max-width.rem]="32"
->
-  <header tuiHeader>
-    <h2 tuiTitle>Регистрация</h2>
-  </header>
+<div class="form-container">
+  <form
+    tuiAppearance="floating"
+    tuiCardLarge
+    tuiForm="m"
+    [formGroup]="registerForm"
+    [style.max-width.rem]="32"
+    (ngSubmit)="onRegister()"
+  >
+    <header tuiHeader>
+      <h2 tuiTitle>Регистрация</h2>
+    </header>
 
-  <app-auth-inputs [formGroup]="registerForm"></app-auth-inputs>
+    <app-auth-inputs [formGroup]="registerForm"></app-auth-inputs>
 
-  <footer>
-    <button (click)="onRegister()" tuiButton type="submit">Зарегистрироваться</button>
-  </footer>
-</form>
+    <footer>
+      <button tuiButton type="submit">Зарегистрироваться</button>
+      <p class="auth-link">
+        Уже есть аккаунт? <a routerLink="/auth/login">Войти</a>
+      </p>
+    </footer>
+  </form>
+</div>

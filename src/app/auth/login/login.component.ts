@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
-import {AuthService} from '../auth.service';
-import {TuiAppearance, TuiButton, TuiError, TuiTextfieldComponent, TuiTitle} from '@taiga-ui/core';
+import {AuthService} from '../../services/auth.service';
+import {TuiAppearance, TuiButton, TuiTitle} from '@taiga-ui/core';
 import {TuiCardLarge, TuiForm, TuiHeader} from '@taiga-ui/layout';
 import {FormControl, FormGroup, ReactiveFormsModule, Validators} from '@angular/forms';
 import {Router, RouterModule} from '@angular/router';
@@ -21,19 +21,28 @@ import {AuthInputsComponent} from '../../shared/components/auth-inputs/auth-inpu
     TuiForm
   ],
   templateUrl: './login.component.html',
-  styleUrl: './login.component.less'
+  styleUrl: '../../shared/styles/auth.less'
 })
 export class LoginComponent {
-  login: string = '';
-  password: string = '';
-
   loginForm = new FormGroup({
     login: new FormControl('', Validators.required),
-    password: new FormControl(''),
-  })
+    password: new FormControl('', Validators.required),
+  });
+
+  constructor(private authService: AuthService, private router: Router) {}
 
   onLogin() {
-    this.authService.login({ login: this.login, password: this.password }).subscribe({
+    if (this.loginForm.invalid) {
+      this.loginForm.markAllAsTouched();
+      return;
+    }
+
+    const formValue = this.loginForm.value;
+
+    this.authService.login({
+      login: formValue.login || '',
+      password: formValue.password || ''
+    }).subscribe({
       next: () => {
         this.router.navigate(['/dashboard']).then();
       },
@@ -42,7 +51,4 @@ export class LoginComponent {
       }
     });
   }
-
-  constructor(private authService: AuthService, private router: Router) {}
-
 }

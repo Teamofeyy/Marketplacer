@@ -1,17 +1,10 @@
 import { Component } from '@angular/core';
-import {AsyncPipe} from '@angular/common';
 import {FormControl, FormGroup, ReactiveFormsModule, Validators} from '@angular/forms';
-import {TuiAppearance, TuiButton, TuiError, TuiTextfieldComponent, TuiTitle} from '@taiga-ui/core';
+import {TuiAppearance, TuiButton, TuiTitle} from '@taiga-ui/core';
 import {TuiCardLarge, TuiForm, TuiHeader} from '@taiga-ui/layout';
-import {TuiFieldErrorPipe} from '@taiga-ui/kit';
 import {AuthInputsComponent} from '../../shared/components/auth-inputs/auth-inputs.component';
-import {AuthService} from '../auth.service';
-import {Router} from '@angular/router';
-
-interface RegisterFormValue {
-  login: string;
-  password: string;
-}
+import {AuthService} from '../../services/auth.service';
+import {Router, RouterLink} from '@angular/router';
 
 @Component({
   selector: 'app-register',
@@ -24,10 +17,11 @@ interface RegisterFormValue {
     TuiHeader,
     TuiTitle,
     TuiForm,
-    TuiButton
+    TuiButton,
+    RouterLink
   ],
   templateUrl: './register.component.html',
-  styleUrl: './register.component.less'
+  styleUrl: '../../shared/styles/auth.less'
 })
 export class RegisterComponent {
 
@@ -38,7 +32,7 @@ export class RegisterComponent {
 
   registerForm = new FormGroup({
     login: new FormControl<string | null>('', Validators.required),
-    password: new FormControl<string | null>('', Validators.minLength(6)),
+    password: new FormControl<string | null>('', [Validators.required, Validators.minLength(6)]),
   })
 
   onRegister() {
@@ -56,7 +50,9 @@ export class RegisterComponent {
       role_id: 1
     }).subscribe({
       next: () => {
-        this.router.navigate(['/login']).then();
+        this.router.navigate(['/auth/login']).then(() => {
+          console.log('Registration successful! Please login.');
+        });
       },
       error: (err) => {
         console.error('Registration failed:', err);
