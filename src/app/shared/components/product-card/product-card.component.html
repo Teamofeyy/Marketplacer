@@ -1,0 +1,12 @@
+<div tuiCardLarge class="product-card" (click)="viewHistory()">
+  <div tuiHeader>
+    <h1 tuiTitle>{{ product.name }}</h1>
+  </div>
+  <div class="product-info">
+    <div class="product-details">
+      <p>URL: <a [href]="product.url" target="_blank" (click)="$event.stopPropagation()">{{ product.url }}</a></p>
+      <p>Created: {{ product.created_at | date:'medium' }}</p>
+      <p>Updated: {{ product.updated_at | date:'medium' }}</p>
+    </div>
+  </div>
+</div>
