@@ -1,0 +1,88 @@
+.chart-page {
+  padding: 2rem;
+  max-width: 1200px;
+  margin: 0 auto;
+
+  .header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 2rem;
+
+    .title-section {
+      h1 {
+        margin: 0;
+        color: var(--tui-text-01);
+        margin-bottom: 0.5rem;
+      }
+
+      .product-info {
+        h2 {
+          margin: 0;
+          font-size: 1.25rem;
+          color: var(--tui-text-02);
+          margin-bottom: 0.5rem;
+        }
+
+        .product-link {
+          display: flex;
+          align-items: center;
+          gap: 0.5rem;
+          color: var(--tui-link);
+          text-decoration: none;
+          font-size: 0.875rem;
+
+          &:hover {
+            text-decoration: underline;
+          }
+
+          tui-icon {
+            font-size: 1rem;
+          }
+        }
+      }
+    }
+  }
+
+  .content {
+    background: var(--tui-base-01);
+    border-radius: var(--tui-radius-m);
+    box-shadow: var(--tui-shadow);
+    padding: 1rem;
+  }
+
+  .loading-state,
+  .error-state {
+    text-align: center;
+    padding: 2rem;
+    color: var(--tui-text-02);
+  }
+
+  .error-state {
+    color: var(--tui-error-fill);
+  }
+
+  .chart-section {
+    min-height: 400px;
+  }
+}
+
+.similar-products {
+  margin-top: 2rem;
+  padding: 1rem;
+  background: #fff;
+  border-radius: 0.5rem;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+
+  h3 {
+    margin-bottom: 1rem;
+    font-size: 1.25rem;
+    color: #333;
+  }
+
+  .products-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 1rem;
+  }
+}

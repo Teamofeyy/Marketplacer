@@ -10,6 +10,11 @@ export const DASHBOARD_ROUTES: Routes = [
         path: 'analytics',
         loadComponent: () => import('./product-analytics/product-analytics.component')
           .then(m => m.ProductAnalyticsComponent)
+      },
+      {
+        path: 'product/:id/chart',
+        loadComponent: () => import('./product-chart-page/product-chart-page.component')
+          .then(m => m.ProductChartPageComponent)
       }
     ]
   }

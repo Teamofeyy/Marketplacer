@@ -6,9 +6,9 @@
     <div class="product-details">
       <p *ngIf="product.url != null">
 <!--        Ссылка:-->
-<!--&lt;!&ndash;        <a [href]="product.url" target="_blank" (click)="$event.stopPropagation()">&ndash;&gt;-->
-<!--&lt;!&ndash;          {{ product.url }}&ndash;&gt;-->
-<!--&lt;!&ndash;        </a>&ndash;&gt;-->
+<!--        <a [href]="product.url" target="_blank" (click)="$event.stopPropagation()">-->
+<!--          {{ product.url }}-->
+<!--        </a>-->
       </p>
       <p>Создано: {{ product.created_at | date:'medium' }}</p>
     </div>

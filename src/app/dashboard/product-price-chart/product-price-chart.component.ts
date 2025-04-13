@@ -20,10 +20,12 @@ import { Subject, takeUntil } from 'rxjs';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ProductPriceChartComponent implements OnInit, OnDestroy {
-  @Input() productId: number = 4;
+  @Input() productId!: number;
 
   productHistory: ProductHistory[] = [];
   priceData: [number, number][] = [];
+  errorMessage: string = '';
+  isLoading: boolean = true;
 
   // Для хранения меток осей
   xLabels: string[] = [];
@@ -37,8 +39,22 @@ export class ProductPriceChartComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit(): void {
-    console.log('ProductPriceChartComponent initialized with productId:', this.productId);
+    console.log('Chart Component: Initializing with productId:', this.productId);
+    if (!this.productId) {
+      console.error('Chart Component: productId is required');
+      this.errorMessage = 'ID продукта не указан';
+      this.isLoading = false;
+      this.cdr.markForCheck();
+      return;
+    }
     this.loadProductHistory();
+  }
+
+  ngOnChanges(): void {
+    console.log('Chart Component: Input changed, new productId:', this.productId);
+    if (this.productId) {
+      this.loadProductHistory();
+    }
   }
 
   ngOnDestroy(): void {
@@ -47,70 +63,145 @@ export class ProductPriceChartComponent implements OnInit, OnDestroy {
   }
 
   private loadProductHistory(): void {
-    if (!this.productId) {
-      console.error('No productId provided');
-      this.cdr.markForCheck();
-      return;
-    }
-
+    console.log('Chart Component: Loading history for productId:', this.productId);
+    this.isLoading = true;
+    this.errorMessage = '';
     this.cdr.markForCheck();
-    console.log('Loading product history for productId:', this.productId);
 
     this.productHistoryService.getProductHistory(this.productId)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (data) => {
-          console.log('Received product history data:', data);
-          // Преобразуем строку в объект Date для поля created_at
-          this.productHistory = data.map(item => ({
-            ...item,
-            created_at: new Date(item.created_at) // Преобразуем строку в Date
-          }));
-          this.prepareChartData();
+          console.log('Chart Component: Received data:', data);
+          this.isLoading = false;
+          
+          try {
+            if (!data || data.length === 0) {
+              console.log('Chart Component: No data received');
+              this.priceData = [];
+              this.cdr.markForCheck();
+              return;
+            }
+
+            // Преобразуем строку в объект Date для поля created_at
+            this.productHistory = data.map(item => {
+              let date: Date;
+              const createdAt = item.created_at as string | Date;
+              
+              if (typeof createdAt === 'string') {
+                date = new Date(createdAt);
+                if (isNaN(date.getTime())) {
+                  const timestamp = Date.parse(createdAt.replace(' ', 'T'));
+                  date = new Date(timestamp);
+                }
+              } else if (createdAt instanceof Date) {
+                date = createdAt;
+              } else {
+                console.error('Chart Component: Invalid date format:', createdAt);
+                date = new Date();
+              }
+              
+              return {
+                ...item,
+                created_at: date
+              };
+            });
+
+            console.log('Chart Component: Processed history:', this.productHistory);
+            this.prepareChartData();
+          } catch (error) {
+            console.error('Chart Component: Error processing data:', error);
+            this.errorMessage = 'Ошибка обработки данных';
+          }
+          
           this.cdr.markForCheck();
         },
         error: (error) => {
-          console.error('Error loading product history:', error);
+          console.error('Chart Component: Error loading history:', error);
+          this.isLoading = false;
+          if (error.status === 401) {
+            this.errorMessage = 'Ошибка авторизации. Возможно, токен истек';
+          } else if (error.status === 0) {
+            this.errorMessage = 'Сервер недоступен. Проверьте подключение к интернету';
+          } else if (error.status === 404) {
+            this.errorMessage = 'Данные не найдены. Проверьте ID продукта';
+          } else {
+            this.errorMessage = `Ошибка загрузки данных: ${error.message}`;
+          }
           this.cdr.markForCheck();
         }
       });
   }
 
   private prepareChartData(): void {
+    console.log('Chart Component: Preparing chart data');
     if (!this.productHistory || this.productHistory.length === 0) {
-      console.log('No product history data available');
+      console.log('Chart Component: No history data available');
       this.priceData = [];
       return;
     }
 
-    console.log('Sorting and preparing chart data...');
-    this.priceData = this.productHistory
-      .sort((a, b) => new Date(a.created_at).getTime() - new Date(b.created_at).getTime())
-      .map((item, index) => [index, item.price]);
+    // Сортируем данные по дате
+    const sortedHistory = this.productHistory
+      .sort((a, b) => new Date(a.created_at).getTime() - new Date(b.created_at).getTime());
+    
+    console.log('Chart Component: Sorted history:', sortedHistory);
+    
+    // Формируем данные для графика
+    this.priceData = sortedHistory.map((item, index) => {
+      const point: [number, number] = [index, item.price];
+      console.log(`Chart Component: Point ${index}:`, point);
+      return point;
+    });
 
-    console.log('Prepared price data:', this.priceData);
+    console.log('Chart Component: Final price data:', this.priceData);
 
     // Вычисляем метки для осей
     this.xLabels = this.priceData.map((_, index) => index.toString());
     this.yLabels = this.calculateYAxisLabels(this.priceData);
 
-    console.log('X Labels:', this.xLabels);
-    console.log('Y Labels:', this.yLabels);
+    console.log('Chart Component: X Labels:', this.xLabels);
+    console.log('Chart Component: Y Labels:', this.yLabels);
   }
 
   private calculateYAxisLabels(priceData: [number, number][]): string[] {
     if (!priceData || priceData.length === 0) {
       return [];
     }
+
     const prices = priceData.map(([_, price]) => price);
     const minPrice = Math.min(...prices);
     const maxPrice = Math.max(...prices);
-    const step = 500;
-
-    const labels: string[] = [];
-    for (let i = minPrice; i <= maxPrice; i += step) {
-      labels.push(i.toString());
+    
+    // Если все цены одинаковые, возвращаем только одно значение
+    if (minPrice === maxPrice) {
+      return [minPrice.toString()];
     }
+
+    // Вычисляем оптимальный шаг
+    const range = maxPrice - minPrice;
+    const targetSteps = 5; // Желаемое количество делений
+    let step = Math.ceil(range / targetSteps);
+    
+    // Убеждаемся, что шаг не равен нулю
+    step = Math.max(step, 1);
+
+    // Создаем массив меток
+    const labels: string[] = [];
+    const numSteps = Math.min(Math.floor(range / step) + 1, 10); // Ограничиваем количество меток
+
+    for (let i = 0; i < numSteps; i++) {
+      const value = minPrice + (i * step);
+      if (value <= maxPrice) {
+        labels.push(value.toString());
+      }
+    }
+
+    // Добавляем максимальное значение, если его еще нет
+    if (labels[labels.length - 1] !== maxPrice.toString()) {
+      labels.push(maxPrice.toString());
+    }
+
     return labels;
   }
 }

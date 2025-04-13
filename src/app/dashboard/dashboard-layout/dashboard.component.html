@@ -37,34 +37,38 @@
   </div>
 
   <div class="dashboard-content">
-    <div class="search-bar">
-      <tui-textfield class="tui-space_bottom-3">
-        <input
-          tuiTextfield
-          [(ngModel)]="newProductInput"
-          [placeholder]="'Название товара или URL'"
-          class="name-input"
-        />
-      </tui-textfield>
+    <!-- Показываем поиск и карточки только на главной странице -->
+    <div *ngIf="!isChartRoute" class="main-content">
+      <div class="search-bar">
+        <tui-textfield class="tui-space_bottom-3">
+          <input
+            tuiTextfield
+            [(ngModel)]="newProductInput"
+            [placeholder]="'Название товара или URL'"
+            class="name-input"
+          />
+        </tui-textfield>
 
-      <button
-        tuiButton
-        size="l"
-        (click)="addProduct()"
-        [disabled]="!newProductInput"
-        class="tui-space_left-3"
-      >
-        Добавить товар
-      </button>
+        <button
+          tuiButton
+          size="l"
+          (click)="addProduct()"
+          [disabled]="!newProductInput"
+          class="tui-space_left-3"
+        >
+          Добавить товар
+        </button>
+      </div>
+      <div class="products-grid">
+        <app-product-card
+          *ngFor="let product of products"
+          [product]="product"
+          (click)="onProductClick(product.id)"
+        ></app-product-card>
+      </div>
     </div>
-    <div class="products-grid">
-      <app-product-card
-        *ngFor="let product of products"
-        [product]="product"
-        (click)="onProductClick(product.id)"
-      ></app-product-card>
-    </div>
-    <app-product-price-chart class="chart" [productId]="36"></app-product-price-chart>
+
+    <!-- Роутер для отображения дочерних компонентов -->
     <router-outlet></router-outlet>
   </div>
 </div>

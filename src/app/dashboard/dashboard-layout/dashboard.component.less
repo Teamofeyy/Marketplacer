@@ -1,53 +1,46 @@
 .dashboard-container {
   display: flex;
   height: 100vh;
-  width: 100%;
-  background-color: var(--tui-background-base-alt);
+  background: var(--tui-base-02);
 }
 
 .sidebar {
-  width: 280px;
-  background: var(--tui-background-neutral-1);
-  border-right: 1px solid var(--tui-background-neutral-1-hover);
-  border-radius: 10px;
+  width: 250px;
+  background: var(--tui-base-01);
   padding: 1rem;
   display: flex;
   flex-direction: column;
-  overflow-y: auto;
+  border-right: 1px solid var(--tui-background-neutral-1);
 
   .sidebar-header {
-    padding: 1rem;
-    margin-bottom: 1rem;
+    padding-bottom: 1rem;
     border-bottom: 1px solid var(--tui-base-03);
-    text-align: center;
+    margin-bottom: 1rem;
+
+    h1 {
+      margin: 0;
+      color: var(--tui-text-01);
+    }
   }
 
   .sidebar-sections {
     display: flex;
     flex-direction: column;
     gap: 0.5rem;
-  }
+    flex-grow: 1;
 
-  .sidebar-section {
-    justify-content: flex-start;
-    padding: 1rem;
-
-    &:hover {
-      background: var(--tui-base-03);
-    }
-
-    &.active {
-      background: var(--tui-primary);
-      color: var(--tui-primary-text);
+    .sidebar-section {
+      background-color: var(--tui-background-base-alt);
+      width: 100%;
+      justify-content: flex-start;
     }
   }
-}
 
-.section-content {
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-  width: 100%;
+  .logout-container {
+    margin-top: auto;
+    padding-top: 1rem;
+    border-top: 1px solid var(--tui-base-03);
+  }
 }
 
 .dashboard-content {
@@ -56,14 +49,33 @@
   overflow-y: auto;
 }
 
+.main-content {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
 .search-bar {
   display: flex;
+  gap: 1rem;
   align-items: center;
   margin-bottom: 2rem;
 
   tui-textfield {
-    flex-grow: 1;
+    width: 400px;
   }
+}
+
+.products-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.section-content {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
 }
 
 .empty-state {
@@ -105,8 +117,26 @@
   }
 }
 
-.logout-container {
-  margin-top: auto;
-  border-top: 1px solid var(--tui-base-03);
-  padding-top: 0.5rem;
+.chart-container {
+  margin-top: 2rem;
+  padding: 1rem;
+  background: var(--tui-base-01);
+  border-radius: var(--tui-radius-m);
+  box-shadow: var(--tui-shadow);
+
+  .chart-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+
+    h3 {
+      margin: 0;
+    }
+  }
+
+  .chart {
+    width: 100%;
+    height: 300px;
+  }
 }

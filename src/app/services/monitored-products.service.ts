@@ -1,6 +1,6 @@
 import {inject, Injectable} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
-import {Observable} from 'rxjs';
+import {Observable, throwError} from 'rxjs';
 import {AuthService} from './auth.service';
 import {MonitoredProduct, ProductHistory, ProductHistoryParams, MonitoredProductCreate} from '../interfaces/product.interface';
 
@@ -62,6 +62,39 @@ export class MonitoredProductsService {
     return this.http.get<ProductHistory[]>(
       `${this.baseUrl}/products/monitored/${monitored_product_id}/history`,
       { params: queryParams }
+    );
+  }
+
+  getProduct(id: number): Observable<MonitoredProduct> {
+    const token = this.authService.getToken();
+    if (!token) {
+      return throwError(() => new Error('No token available'));
+    }
+
+    return this.http.get<MonitoredProduct>(
+      `${this.baseUrl}/products/monitored/${id}`,
+      {
+        params: {
+          token
+        }
+      }
+    );
+  }
+
+  getSimilarProducts(id: number): Observable<MonitoredProduct[]> {
+    const token = this.authService.getToken();
+    if (!token) {
+      return throwError(() => new Error('No token available'));
+    }
+
+    return this.http.get<MonitoredProduct[]>(
+      `${this.baseUrl}/products/monitored/${id}/similar`,
+      {
+        params: {
+          token,
+          limit: 5 // Ограничиваем количество похожих товаров
+        }
+      }
     );
   }
 }

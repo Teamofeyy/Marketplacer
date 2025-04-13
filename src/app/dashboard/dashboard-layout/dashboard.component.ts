@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { RouterOutlet, Router, RouterLink, RouterLinkActive } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -7,7 +7,8 @@ import { MonitoredProduct, MonitoredProductCreate } from '../../interfaces/produ
 import { ProductCardComponent } from '../../shared/components/product-card/product-card.component';
 import { TuiButton, TuiIcon, TuiTextfield } from '@taiga-ui/core';
 import { AuthService } from '../../services/auth.service';
-import {ProductPriceChartComponent} from '../product-price-chart/product-price-chart.component';
+import { Subject, takeUntil } from 'rxjs';
+import { ProductPriceChartComponent } from '../product-price-chart/product-price-chart.component';
 
 @Component({
   selector: 'app-dashboard-layout',
@@ -27,25 +28,34 @@ import {ProductPriceChartComponent} from '../product-price-chart/product-price-c
   templateUrl: './dashboard.component.html',
   styleUrl: './dashboard.component.less',
 })
-export class DashboardComponent implements OnInit {
+export class DashboardComponent implements OnInit, OnDestroy {
   products: MonitoredProduct[] = [];
-  isHistoryRoute = false;
   newProductInput = '';
+  isChartRoute = false;
+  private destroy$ = new Subject<void>();
 
   constructor(
     private monitoredProductsService: MonitoredProductsService,
-    private router: Router,
+    public router: Router,
     public authService: AuthService
   ) {
-    this.isHistoryRoute = this.router.url.includes('/history');
+    // Отслеживаем изменения маршрута
+    this.router.events.pipe(takeUntil(this.destroy$)).subscribe(() => {
+      this.isChartRoute = this.router.url.includes('/product/') && this.router.url.includes('/chart');
+    });
   }
 
   ngOnInit() {
     this.loadProducts();
   }
 
+  ngOnDestroy() {
+    this.destroy$.next();
+    this.destroy$.complete();
+  }
+
   onProductClick(productId: number) {
-    this.router.navigate(['/dashboard/product', productId, 'history']);
+    this.router.navigate(['/dashboard/product', productId, 'chart']);
   }
 
   private isUrl(input: string): boolean {
