@@ -1,0 +1,78 @@
+@import '@taiga-ui/core/styles/taiga-ui-local.less';
+
+.flex-center() {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.chart-container {
+  background: var(--tui-base-01);
+  border-radius: var(--tui-radius-l);
+  padding: var(--tui-padding-l);
+
+  h3 {
+    margin: 0 0 var(--tui-padding-l);
+    color: var(--tui-text-01);
+    font-weight: 500;
+  }
+
+  .no-data {
+    .flex-center();
+    height: 300px;
+    color: var(--tui-text-02);
+  }
+
+  .chart {
+    margin: 1rem 0;
+    position: relative;
+
+    tui-axes {
+      display: block;
+      height: 300px;
+      width: 100%;
+
+      ::ng-deep {
+        .t-line {
+          stroke: var(--tui-primary);
+          stroke-width: 2;
+        }
+
+        .t-dot {
+          r: 5;
+          fill: var(--tui-primary);
+          stroke: var(--tui-base-01);
+          stroke-width: 2;
+          cursor: pointer;
+
+          &:hover {
+            r: 7;
+            stroke-width: 3;
+          }
+        }
+
+        .t-axis {
+          stroke: var(--tui-text-03);
+        }
+
+        .t-grid {
+          stroke: var(--tui-base-03);
+        }
+
+        .t-label {
+          fill: var(--tui-text-02);
+          font-size: 12px;
+        }
+      }
+    }
+  }
+
+  .debug-info {
+    margin-top: 1rem;
+    padding: 1rem;
+    background: var(--tui-base-02);
+    border-radius: var(--tui-radius-m);
+    font-size: 12px;
+    color: var(--tui-text-02);
+  }
+}

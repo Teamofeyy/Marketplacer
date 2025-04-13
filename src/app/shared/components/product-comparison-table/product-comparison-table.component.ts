@@ -1,12 +1,12 @@
 import { Component, Input } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { TuiTableModule } from '@taiga-ui/addon-table';
+import { TuiTable } from '@taiga-ui/addon-table';
 import { MonitoredProduct } from '../../../interfaces/product.interface';
 
 @Component({
   selector: 'app-product-comparison-table',
   standalone: true,
-  imports: [CommonModule, TuiTableModule],
+  imports: [CommonModule, TuiTable],
   template: `
     <div class="comparison-table">
       <table tuiTable>
@@ -61,4 +61,4 @@ import { MonitoredProduct } from '../../../interfaces/product.interface';
 })
 export class ProductComparisonTableComponent {
   @Input() products: (MonitoredProduct & { rating?: number; review_count?: number; buy_count?: number; price?: number })[] = [];
-} 
+}

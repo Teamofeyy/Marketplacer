@@ -7,7 +7,7 @@ import { MonitoredProduct, MonitoredProductCreate } from '../../interfaces/produ
 import { ProductCardComponent } from '../../shared/components/product-card/product-card.component';
 import { TuiButton, TuiIcon, TuiTextfield } from '@taiga-ui/core';
 import { AuthService } from '../../services/auth.service';
-import {ProductPriceChartComponent} from '../../shared/components/product-price-chart/product-price-chart.component';
+import {ProductPriceChartComponent} from '../product-price-chart/product-price-chart.component';
 
 @Component({
   selector: 'app-dashboard-layout',
