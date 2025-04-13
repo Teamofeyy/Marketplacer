@@ -1,0 +1,142 @@
+.dashboard-container {
+  display: flex;
+  height: 100vh;
+  background: var(--tui-base-02);
+}
+
+.sidebar {
+  width: 250px;
+  background: var(--tui-base-01);
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  border-right: 1px solid var(--tui-background-neutral-1);
+
+  .sidebar-header {
+    padding-bottom: 1rem;
+    border-bottom: 1px solid var(--tui-base-03);
+    margin-bottom: 1rem;
+
+    h1 {
+      margin: 0;
+      color: var(--tui-text-01);
+    }
+  }
+
+  .sidebar-sections {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    flex-grow: 1;
+
+    .sidebar-section {
+      background-color: var(--tui-background-base-alt);
+      width: 100%;
+      justify-content: flex-start;
+    }
+  }
+
+  .logout-container {
+    margin-top: auto;
+    padding-top: 1rem;
+    border-top: 1px solid var(--tui-base-03);
+  }
+}
+
+.dashboard-content {
+  flex-grow: 1;
+  padding: 2rem;
+  overflow-y: auto;
+}
+
+.main-content {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.search-bar {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+  margin-bottom: 2rem;
+
+  tui-textfield {
+    width: 400px;
+  }
+}
+
+.products-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.section-content {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.empty-state {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 400px;
+
+  .empty-state-card {
+    text-align: center;
+    padding: 2rem;
+    max-width: 500px;
+  }
+}
+
+.comparison-table {
+  margin-top: 2rem;
+  background: var(--tui-background-base);
+  border-radius: 1rem;
+  overflow: hidden;
+
+  table {
+    width: 100%;
+  }
+
+  th {
+    background: var(--tui-background-neutral-1);
+    padding: 1rem;
+    text-align: left;
+  }
+
+  td {
+    padding: 1rem;
+    border-bottom: 1px solid var(--tui-base-03);
+  }
+
+  tr:last-child td {
+    border-bottom: none;
+  }
+}
+
+.chart-container {
+  margin-top: 2rem;
+  padding: 1rem;
+  background: var(--tui-base-01);
+  border-radius: var(--tui-radius-m);
+  box-shadow: var(--tui-shadow);
+
+  .chart-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+
+    h3 {
+      margin: 0;
+    }
+  }
+
+  .chart {
+    width: 100%;
+    height: 300px;
+  }
+}

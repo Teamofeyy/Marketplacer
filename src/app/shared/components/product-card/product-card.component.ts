@@ -2,7 +2,7 @@ import {Component, EventEmitter, Input, Output} from '@angular/core';
 import { TuiAppearance, TuiButton, TuiSurface, TuiTitle } from '@taiga-ui/core';
 import { TuiCardLarge, TuiHeader } from '@taiga-ui/layout';
 import { MonitoredProduct } from '../../../interfaces/product.interface'
-import { DatePipe } from '@angular/common';
+import {DatePipe, NgIf} from '@angular/common';
 
 @Component({
   selector: 'app-product-card',
@@ -14,7 +14,8 @@ import { DatePipe } from '@angular/common';
     TuiButton,
     DatePipe,
     TuiSurface,
-    TuiHeader
+    TuiHeader,
+    NgIf
   ],
   templateUrl: './product-card.component.html',
   styleUrl: './product-card.component.less'

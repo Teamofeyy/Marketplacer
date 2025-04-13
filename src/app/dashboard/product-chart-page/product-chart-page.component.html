@@ -1,0 +1,51 @@
+<div class="chart-page">
+  <div class="header">
+    <div class="title-section">
+      <h1>Динамика цен</h1>
+      <div *ngIf="product" class="product-info">
+        <h2>{{product.name}}</h2>
+        <a [href]="product.url" target="_blank" class="product-link">
+          Открыть товар в магазине →
+        </a>
+      </div>
+    </div>
+    <button
+      tuiButton
+      appearance="secondary"
+      routerLink="/dashboard"
+    >
+      Назад к списку
+    </button>
+  </div>
+
+  <div class="content">
+    <!-- Состояние загрузки -->
+    <div *ngIf="isLoading" class="loading-state">
+      Загрузка информации о товаре...
+    </div>
+
+    <!-- Состояние ошибки -->
+    <div *ngIf="error" class="error-state">
+      {{error}}
+    </div>
+
+    <!-- График -->
+    <div *ngIf="!isLoading && !error && productId" class="chart-section">
+      <app-product-price-chart
+        [productId]="productId"
+      ></app-product-price-chart>
+    </div>
+
+    <!-- Похожие товары -->
+    <div *ngIf="!isLoading && !error && similarProducts.length > 0" class="similar-products">
+      <h3>Похожие товары</h3>
+      <div class="products-grid">
+        <app-product-card
+          *ngFor="let product of similarProducts"
+          [product]="product"
+          (click)="onSimilarProductClick(product.id)"
+        ></app-product-card>
+      </div>
+    </div>
+  </div>
+</div>

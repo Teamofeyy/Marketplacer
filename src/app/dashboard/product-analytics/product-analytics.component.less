@@ -1,0 +1,31 @@
+.analytics-container {
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
+
+  .table-container {
+    background: var(--tui-base-01);
+    border-radius: 12px;
+    padding: 20px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+
+  .chart-container {
+    background: var(--tui-base-01);
+    border-radius: 12px;
+    padding: 20px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+
+    h3 {
+      margin: 0 0 20px;
+      color: var(--tui-text-01);
+      font-weight: 500;
+    }
+
+    tui-axes {
+      height: 300px;
+      width: 100%;
+    }
+  }
+} 

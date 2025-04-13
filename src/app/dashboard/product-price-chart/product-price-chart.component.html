@@ -1,0 +1,49 @@
+<div class="chart-container">
+  <h3 class="tui-text_h3">Динамика цен</h3>
+
+  <!-- Состояние загрузки -->
+  <div *ngIf="isLoading" class="loading-state">
+    Загрузка данных...
+  </div>
+
+  <!-- Состояние ошибки -->
+  <div *ngIf="errorMessage" class="error-state">
+    {{errorMessage}}
+  </div>
+
+  <!-- Состояние отсутствия данных -->
+  <div *ngIf="!isLoading && !errorMessage && !priceData.length" class="no-data">
+    Нет данных для отображения
+  </div>
+
+  <!-- График -->
+  <div *ngIf="!isLoading && !errorMessage && priceData.length > 0" class="chart-wrapper">
+    <tui-axes
+      class="axes"
+      [horizontalLines]="5"
+      [verticalLines]="5"
+      [axisXLabels]="xLabels"
+      [axisYLabels]="yLabels">
+      <tui-line-chart
+        class="chart"
+        [value]="priceData"
+        [height]="300"
+        [width]="600"
+        [dots]="true"
+        [x]="0"
+        [y]="0"
+        [style.stroke]="'var(--tui-primary)'"
+        [style.stroke-width]="2">
+      </tui-line-chart>
+    </tui-axes>
+  </div>
+
+  <!-- Отладочная информация -->
+  <div class="debug-info">
+    <div>ID продукта: {{productId}}</div>
+    <div>Количество точек данных: {{priceData.length}}</div>
+    <div>Текущая цена: {{priceData[priceData.length - 1]?.[1] || 'нет данных'}} ₽</div>
+    <div>Количество отзывов: {{{rewiew_count} || 'нет данных'}} ₽</div>
+
+  </div>
+</div>

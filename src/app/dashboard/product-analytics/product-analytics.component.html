@@ -1,0 +1,65 @@
+<div class="analytics-container">
+  <!-- Таблица с данными -->
+  <div class="table-container">
+    <table
+      tuiTable
+      [columns]="columns">
+      <tbody tuiTbody [data]="productHistory">
+        <ng-template tuiCell="name" let-item>
+          {{ item.name }}
+        </ng-template>
+        <ng-template tuiCell="price" let-item>
+          {{ item.price | currency:'RUB' }}
+        </ng-template>
+        <ng-template tuiCell="rating" let-item>
+          {{ item.rating }}
+        </ng-template>
+        <ng-template tuiCell="review_count" let-item>
+          {{ item.review_count }}
+        </ng-template>
+        <ng-template tuiCell="buy_count" let-item>
+          {{ item.buy_count }}
+        </ng-template>
+        <ng-template tuiCell="created_at" let-item>
+          {{ item.created_at | date:'short' }}
+        </ng-template>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- График цен -->
+  <div class="chart-container">
+    <h3>Динамика цен</h3>
+    <tui-axes
+      [axisXLabels]="['']"
+      [axisYLabels]="['0', '50000', '100000', '150000', '200000']">
+      <tui-line-chart
+        [value]="priceData">
+      </tui-line-chart>
+    </tui-axes>
+  </div>
+
+  <!-- График отзывов -->
+  <div class="chart-container">
+    <h3>Динамика отзывов</h3>
+    <tui-axes
+      [axisXLabels]="['']"
+      [axisYLabels]="['0', '50', '100', '150', '200']">
+      <tui-line-chart
+        [value]="reviewData">
+      </tui-line-chart>
+    </tui-axes>
+  </div>
+
+  <!-- График покупок -->
+  <div class="chart-container">
+    <h3>Динамика покупок</h3>
+    <tui-axes
+      [axisXLabels]="['']"
+      [axisYLabels]="['0', '50', '100', '150', '200']">
+      <tui-bar-chart
+        [value]="buyCountData">
+      </tui-bar-chart>
+    </tui-axes>
+  </div>
+</div>
