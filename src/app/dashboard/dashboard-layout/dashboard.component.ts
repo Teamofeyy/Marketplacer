@@ -7,6 +7,7 @@ import { MonitoredProduct, MonitoredProductCreate } from '../../interfaces/produ
 import { ProductCardComponent } from '../../shared/components/product-card/product-card.component';
 import { TuiButton, TuiIcon, TuiTextfield } from '@taiga-ui/core';
 import { AuthService } from '../../services/auth.service';
+import {ProductPriceChartComponent} from '../../shared/components/product-price-chart/product-price-chart.component';
 
 @Component({
   selector: 'app-dashboard-layout',
@@ -21,6 +22,7 @@ import { AuthService } from '../../services/auth.service';
     TuiButton,
     TuiTextfield,
     TuiIcon,
+    ProductPriceChartComponent,
   ],
   templateUrl: './dashboard.component.html',
   styleUrl: './dashboard.component.less',
@@ -60,8 +62,8 @@ export class DashboardComponent implements OnInit {
 
     const isUrl = this.isUrl(this.newProductInput);
     console.log('Input:', this.newProductInput, 'Is URL:', isUrl);
-    
-    const productData: MonitoredProductCreate = isUrl 
+
+    const productData: MonitoredProductCreate = isUrl
       ? { name: '', url: this.newProductInput }
       : { name: this.newProductInput };
 

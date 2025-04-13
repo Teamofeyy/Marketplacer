@@ -50,12 +50,13 @@ export class MonitoredProductsService {
       throw new Error('Authentication token is required');
     }
 
+    // Исправляем формирование query параметров
     const queryParams = {
       token,
       skip: params.skip ?? 0,
       limit: params.limit ?? 100,
       ...(params.start_time && { start_time: params.start_time }),
-      ...(params.end_time && { end_time: params.end_time })
+      ...(params.end_time && { end_time: params.end_time }),
     };
 
     return this.http.get<ProductHistory[]>(
