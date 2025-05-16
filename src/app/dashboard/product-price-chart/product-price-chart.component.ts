@@ -1,10 +1,15 @@
-import { Component, OnInit, OnDestroy, Input, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
+import {Component, OnInit, OnDestroy, Input, ChangeDetectionStrategy, ChangeDetectorRef, inject} from '@angular/core';
 import { ProductHistoryService } from '../../services/product-history.service';
 import { ProductHistory } from '../../interfaces/product-history.interface';
-import { TuiAxes, TuiLineChart } from '@taiga-ui/addon-charts';
-import { TuiRoot } from '@taiga-ui/core';
 import { CommonModule } from '@angular/common';
 import { Subject, takeUntil } from 'rxjs';
+import {
+  TuiAxes,
+  TuiLineChart,
+} from '@taiga-ui/addon-charts';
+import {TUI_IS_E2E, TuiDay, TuiDayRange, TuiStringHandler} from '@taiga-ui/cdk';
+import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
+import {TUI_MONTHS, TuiLoader} from '@taiga-ui/core';
 
 @Component({
   selector: 'app-product-price-chart',
@@ -13,23 +18,70 @@ import { Subject, takeUntil } from 'rxjs';
   standalone: true,
   imports: [
     CommonModule,
-    TuiRoot,
     TuiAxes,
-    TuiLineChart
+    TuiLineChart,
+    FormsModule,
+    ReactiveFormsModule,
+    TuiLoader,
   ],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ProductPriceChartComponent implements OnInit, OnDestroy {
   @Input() productId!: number;
 
-  productHistory: ProductHistory[] = [];
-  priceData: [number, number][] = [];
-  errorMessage: string = '';
-  isLoading: boolean = true;
+  private readonly isE2E = inject(TUI_IS_E2E);
+  private readonly months$ = inject(TUI_MONTHS);
 
-  // Для хранения меток осей
+  priceData: [TuiDay, number][] = [];
+  errorMessage = '';
+  isLoading = true;
+  currentMarketplace: { name: string; icon: string } | null = null;
+
+  ratingData: [TuiDay, number][] = [];
+  reviewsData: [TuiDay, number][] = [];
   xLabels: string[] = [];
-  yLabels: string[] = [];
+  dateRangeControl = new FormControl<TuiDayRange | null>(null);
+  maxRange = 30;
+  legendItems = [
+    { label: 'Цена', color: 'var(--tui-primary)' },
+    { label: 'Рейтинг', color: 'var(--tui-success-fill)' },
+    { label: 'Отзывы', color: 'var(--tui-warning-fill)' }
+  ];
+
+  get minDate(): TuiDay {
+    return this.priceData[0]?.[0] || TuiDay.currentLocal();
+  }
+
+  get maxDate(): TuiDay {
+    return this.priceData[this.priceData.length - 1]?.[0] || TuiDay.currentLocal();
+  }
+
+  get hasData(): boolean {
+    return this.priceData.length > 0 ||
+      this.ratingData.length > 0 ||
+      this.reviewsData.length > 0;
+  }
+
+  get value(): readonly (readonly [number, number])[] {
+    return [
+      ...this.convertToPoints(this.priceData),
+      ...this.convertToPoints(this.ratingData),
+      ...this.convertToPoints(this.reviewsData)
+    ] as const;
+  }
+
+  private convertToPoints(data: [TuiDay, number][]): Array<[number, number]> {
+    return data.map(([day, value]) => [
+      day.toUtcNativeDate().getTime(),
+      value
+    ] as [number, number]);
+  }
+
+  readonly xStringify: TuiStringHandler<number> = (timestamp: number) => {
+    return TuiDay.fromUtcNativeDate(new Date(timestamp)).toString();
+  };
+
+  readonly yStringify: TuiStringHandler<number> = (value: number) => `${value}`;
 
   private destroy$ = new Subject<void>();
 
@@ -39,22 +91,7 @@ export class ProductPriceChartComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit(): void {
-    console.log('Chart Component: Initializing with productId:', this.productId);
-    if (!this.productId) {
-      console.error('Chart Component: productId is required');
-      this.errorMessage = 'ID продукта не указан';
-      this.isLoading = false;
-      this.cdr.markForCheck();
-      return;
-    }
     this.loadProductHistory();
-  }
-
-  ngOnChanges(): void {
-    console.log('Chart Component: Input changed, new productId:', this.productId);
-    if (this.productId) {
-      this.loadProductHistory();
-    }
   }
 
   ngOnDestroy(): void {
@@ -63,145 +100,86 @@ export class ProductPriceChartComponent implements OnInit, OnDestroy {
   }
 
   private loadProductHistory(): void {
-    console.log('Chart Component: Loading history for productId:', this.productId);
-    this.isLoading = true;
-    this.errorMessage = '';
-    this.cdr.markForCheck();
+    if (!this.productId) {
+      this.errorMessage = 'ID продукта не указан';
+      this.isLoading = false;
+      this.cdr.markForCheck();
+      return;
+    }
 
+    this.isLoading = true;
     this.productHistoryService.getProductHistory(this.productId)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
-        next: (data) => {
-          console.log('Chart Component: Received data:', data);
+        next: (data) => this.handleData(data),
+        error: () => {
+          this.errorMessage = 'Ошибка загрузки данных';
           this.isLoading = false;
-          
-          try {
-            if (!data || data.length === 0) {
-              console.log('Chart Component: No data received');
-              this.priceData = [];
-              this.cdr.markForCheck();
-              return;
-            }
-
-            // Преобразуем строку в объект Date для поля created_at
-            this.productHistory = data.map(item => {
-              let date: Date;
-              const createdAt = item.created_at as string | Date;
-              
-              if (typeof createdAt === 'string') {
-                date = new Date(createdAt);
-                if (isNaN(date.getTime())) {
-                  const timestamp = Date.parse(createdAt.replace(' ', 'T'));
-                  date = new Date(timestamp);
-                }
-              } else if (createdAt instanceof Date) {
-                date = createdAt;
-              } else {
-                console.error('Chart Component: Invalid date format:', createdAt);
-                date = new Date();
-              }
-              
-              return {
-                ...item,
-                created_at: date
-              };
-            });
-
-            console.log('Chart Component: Processed history:', this.productHistory);
-            this.prepareChartData();
-          } catch (error) {
-            console.error('Chart Component: Error processing data:', error);
-            this.errorMessage = 'Ошибка обработки данных';
-          }
-          
-          this.cdr.markForCheck();
-        },
-        error: (error) => {
-          console.error('Chart Component: Error loading history:', error);
-          this.isLoading = false;
-          if (error.status === 401) {
-            this.errorMessage = 'Ошибка авторизации. Возможно, токен истек';
-          } else if (error.status === 0) {
-            this.errorMessage = 'Сервер недоступен. Проверьте подключение к интернету';
-          } else if (error.status === 404) {
-            this.errorMessage = 'Данные не найдены. Проверьте ID продукта';
-          } else {
-            this.errorMessage = `Ошибка загрузки данных: ${error.message}`;
-          }
           this.cdr.markForCheck();
         }
       });
   }
 
-  private prepareChartData(): void {
-    console.log('Chart Component: Preparing chart data');
-    if (!this.productHistory || this.productHistory.length === 0) {
-      console.log('Chart Component: No history data available');
-      this.priceData = [];
-      return;
+  private handleData(data: ProductHistory[]): void {
+    try {
+      if (!data.length) {
+        this.errorMessage = 'Нет данных для отображения';
+        return;
+      }
+
+      const sortedData = data.sort((a, b) =>
+        new Date(a.created_at).getTime() - new Date(b.created_at).getTime()
+      );
+
+      // Преобразование данных в TuiDay
+      this.priceData = sortedData.map(item => [
+        TuiDay.fromLocalNativeDate(new Date(item.created_at)),
+        item.price
+      ]);
+
+      this.ratingData = sortedData.map(item => [
+        TuiDay.fromLocalNativeDate(new Date(item.created_at)),
+        item.rating
+      ]);
+
+      this.reviewsData = sortedData.map(item => [
+        TuiDay.fromLocalNativeDate(new Date(item.created_at)),
+        item.review_count
+      ]);
+
+      this.xLabels = this.generateXLabels(this.priceData.map(([day]) => day));
+
+      // Установка диапазона дат по умолчанию
+      if (this.priceData.length > 0) {
+        const start = this.minDate;
+        const end = this.maxDate;
+        this.dateRangeControl.setValue(new TuiDayRange(start, end));
+      }
+
+      this.currentMarketplace = sortedData[0]?.market || null;
+
+    } catch (error) {
+      this.errorMessage = 'Ошибка обработки данных';
+    } finally {
+      this.isLoading = false;
+      this.cdr.markForCheck();
     }
-
-    // Сортируем данные по дате
-    const sortedHistory = this.productHistory
-      .sort((a, b) => new Date(a.created_at).getTime() - new Date(b.created_at).getTime());
-    
-    console.log('Chart Component: Sorted history:', sortedHistory);
-    
-    // Формируем данные для графика
-    this.priceData = sortedHistory.map((item, index) => {
-      const point: [number, number] = [index, item.price];
-      console.log(`Chart Component: Point ${index}:`, point);
-      return point;
-    });
-
-    console.log('Chart Component: Final price data:', this.priceData);
-
-    // Вычисляем метки для осей
-    this.xLabels = this.priceData.map((_, index) => index.toString());
-    this.yLabels = this.calculateYAxisLabels(this.priceData);
-
-    console.log('Chart Component: X Labels:', this.xLabels);
-    console.log('Chart Component: Y Labels:', this.yLabels);
   }
 
-  private calculateYAxisLabels(priceData: [number, number][]): string[] {
-    if (!priceData || priceData.length === 0) {
-      return [];
-    }
+  private generateXLabels(dates: TuiDay[]): string[] {
+    return dates.map(date =>
+      date.toLocalNativeDate().toLocaleDateString('ru-RU', {
+        month: 'short',
+        day: 'numeric'
+      })
+    );
+  }
 
-    const prices = priceData.map(([_, price]) => price);
-    const minPrice = Math.min(...prices);
-    const maxPrice = Math.max(...prices);
-    
-    // Если все цены одинаковые, возвращаем только одно значение
-    if (minPrice === maxPrice) {
-      return [minPrice.toString()];
-    }
-
-    // Вычисляем оптимальный шаг
-    const range = maxPrice - minPrice;
-    const targetSteps = 5; // Желаемое количество делений
-    let step = Math.ceil(range / targetSteps);
-    
-    // Убеждаемся, что шаг не равен нулю
-    step = Math.max(step, 1);
-
-    // Создаем массив меток
-    const labels: string[] = [];
-    const numSteps = Math.min(Math.floor(range / step) + 1, 10); // Ограничиваем количество меток
-
-    for (let i = 0; i < numSteps; i++) {
-      const value = minPrice + (i * step);
-      if (value <= maxPrice) {
-        labels.push(value.toString());
-      }
-    }
-
-    // Добавляем максимальное значение, если его еще нет
-    if (labels[labels.length - 1] !== maxPrice.toString()) {
-      labels.push(maxPrice.toString());
-    }
-
-    return labels;
+  getFormattedDate(day: TuiDay): string {
+    return day.toLocalNativeDate().toLocaleDateString('ru-RU', {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric'
+    });
   }
 }

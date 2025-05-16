@@ -1,49 +1,52 @@
 <div class="chart-container">
   <h3 class="tui-text_h3">Динамика цен</h3>
 
-  <!-- Состояние загрузки -->
-  <div *ngIf="isLoading" class="loading-state">
-    Загрузка данных...
+  <div *ngIf="isLoading" class="loading">
+    <tui-loader size="xl"></tui-loader>
   </div>
 
-  <!-- Состояние ошибки -->
-  <div *ngIf="errorMessage" class="error-state">
-    {{errorMessage}}
+
+  <div *ngIf="errorMessage" class="error-state tui-text_body-xl">
+    {{ errorMessage }}
   </div>
 
-  <!-- Состояние отсутствия данных -->
-  <div *ngIf="!isLoading && !errorMessage && !priceData.length" class="no-data">
+
+  <div *ngIf="!isLoading && !errorMessage && hasData" class="chart-wrapper">
+    <h3 class="tui-text_h3">История изменений продукта</h3>
+
+    <div class="controls">
+      <tui-input-date-range
+        [formControl]="dateRangeControl"
+      >
+        Диапазон данных
+      </tui-input-date-range>
+
+      <tui-axes
+        *ngIf="xLabels"
+        class="axes"
+        [axisXLabels]="xLabels"
+        [horizontalLines]="4"
+        [verticalLines]="xLabels.length - 1"
+      >
+        <tui-line-chart
+          class="chart"
+          [height]="200"
+          [value]="value"
+          [xStringify]="xStringify"
+          [yStringify]="yStringify"
+        />
+      </tui-axes>
+
+      <div class="legend">
+        <div *ngFor="let item of legendItems" class="legend-item">
+          <div class="color-box" [style.background]="item.color"></div>
+          <span class="tui-text_body-m">{{ item.label }}</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div *ngIf="!isLoading && !errorMessage && !hasData" class="no-data tui-text_body-m">
     Нет данных для отображения
-  </div>
-
-  <!-- График -->
-  <div *ngIf="!isLoading && !errorMessage && priceData.length > 0" class="chart-wrapper">
-    <tui-axes
-      class="axes"
-      [horizontalLines]="5"
-      [verticalLines]="5"
-      [axisXLabels]="xLabels"
-      [axisYLabels]="yLabels">
-      <tui-line-chart
-        class="chart"
-        [value]="priceData"
-        [height]="300"
-        [width]="600"
-        [dots]="true"
-        [x]="0"
-        [y]="0"
-        [style.stroke]="'var(--tui-primary)'"
-        [style.stroke-width]="2">
-      </tui-line-chart>
-    </tui-axes>
-  </div>
-
-  <!-- Отладочная информация -->
-  <div class="debug-info">
-    <div>ID продукта: {{productId}}</div>
-    <div>Количество точек данных: {{priceData.length}}</div>
-    <div>Текущая цена: {{priceData[priceData.length - 1]?.[1] || 'нет данных'}} ₽</div>
-    <div>Количество отзывов: {{{rewiew_count} || 'нет данных'}} ₽</div>
-
   </div>
 </div>
