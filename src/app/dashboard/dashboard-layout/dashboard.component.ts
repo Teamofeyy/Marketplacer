@@ -1,5 +1,5 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
-import { RouterOutlet, Router, RouterLink, RouterLinkActive } from '@angular/router';
+import { RouterOutlet, Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { MonitoredProductsService } from '../../services/monitored-products.service';
@@ -8,22 +8,18 @@ import { ProductCardComponent } from '../../shared/components/product-card/produ
 import { TuiButton, TuiIcon, TuiTextfield } from '@taiga-ui/core';
 import { AuthService } from '../../services/auth.service';
 import { Subject, takeUntil } from 'rxjs';
-import { ProductPriceChartComponent } from '../product-price-chart/product-price-chart.component';
 
 @Component({
   selector: 'app-dashboard-layout',
   standalone: true,
   imports: [
     RouterOutlet,
-    RouterLink,
-    RouterLinkActive,
     CommonModule,
     FormsModule,
     ProductCardComponent,
     TuiButton,
     TuiTextfield,
     TuiIcon,
-    ProductPriceChartComponent,
   ],
   templateUrl: './dashboard.component.html',
   styleUrl: './dashboard.component.less',

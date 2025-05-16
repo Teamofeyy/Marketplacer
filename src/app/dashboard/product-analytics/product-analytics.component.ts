@@ -1,9 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { ProductHistoryService } from '../../services/product-history.service';
 import { ProductHistory } from '../../interfaces/product-history.interface';
-import { TuiTable, TuiTablePagination } from '@taiga-ui/addon-table';
+import { TuiTable } from '@taiga-ui/addon-table';
 import { TuiAxes, TuiLineChart, TuiBarChart } from '@taiga-ui/addon-charts';
-import { TuiRoot } from '@taiga-ui/core';
 import { CommonModule } from '@angular/common';
 
 @Component({
@@ -13,9 +12,7 @@ import { CommonModule } from '@angular/common';
   standalone: true,
   imports: [
     CommonModule,
-    TuiRoot,
     TuiTable,
-    TuiTablePagination,
     TuiAxes,
     TuiLineChart,
     TuiBarChart
@@ -24,7 +21,7 @@ import { CommonModule } from '@angular/common';
 export class ProductAnalyticsComponent implements OnInit {
   productHistory: ProductHistory[] = [];
   columns = ['name', 'price', 'rating', 'review_count', 'buy_count', 'created_at'];
-  
+
   // Данные для графиков
   priceData: [number, number][] = [];
   reviewData: [number, number][] = [];
@@ -50,4 +47,4 @@ export class ProductAnalyticsComponent implements OnInit {
     this.reviewData = this.productHistory.map((item, index) => [index, item.review_count]);
     this.buyCountData = this.productHistory.map((item, index) => [index, item.buy_count]);
   }
-} 
+}

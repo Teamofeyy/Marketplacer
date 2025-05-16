@@ -1,5 +1,5 @@
 import {Component, EventEmitter, Input, Output} from '@angular/core';
-import { TuiAppearance, TuiButton, TuiSurface, TuiTitle } from '@taiga-ui/core';
+import {  TuiTitle } from '@taiga-ui/core';
 import { TuiCardLarge, TuiHeader } from '@taiga-ui/layout';
 import { MonitoredProduct } from '../../../interfaces/product.interface'
 import {DatePipe, NgIf} from '@angular/common';
@@ -8,12 +8,9 @@ import {DatePipe, NgIf} from '@angular/common';
   selector: 'app-product-card',
   standalone: true,
   imports: [
-    TuiAppearance,
     TuiCardLarge,
     TuiTitle,
-    TuiButton,
     DatePipe,
-    TuiSurface,
     TuiHeader,
     NgIf
   ],
